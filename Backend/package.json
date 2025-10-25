@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "npx prisma generate && tsc",
+    "start": "npx prisma migrate deploy && node dist/index.js",
     "migrate": "npx prisma migrate dev --name init",
     "generate": "npx prisma generate",
     "studio": "npx prisma studio"
