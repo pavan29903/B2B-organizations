@@ -11,8 +11,6 @@ interface Organization {
   createdAt: string;
 }
 
-
-
 interface User {
   id: number;
   name: string;
@@ -25,17 +23,14 @@ interface UserData {
   role: string;
 }
 
-// const MOCK_USERS: User[] = [
-//   { id: 1, name: 'Dave Richards', email: 'dave@gitam.in', role: 'Admin' },
-//   { id: 2, name: 'Abhishek Hari', email: 'abhishek@gitam.in', role: 'Co-ordinator' },
-//   { id: 3, name: 'Nishta Gupta', email: 'nishta@gitam.in', role: 'Admin' }
-// ];
-
 export default function OrganizationDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('basic');
+  const [users, setUsers] = useState<User[]>([]);
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
 
   useEffect(() => {
     const fetchOrganization = async () => {
@@ -55,26 +50,8 @@ export default function OrganizationDetailsPage() {
     fetchOrganization();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-500">Loading organization...</div>
-      </div>
-    );
-  }
-
-  if (!organization) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-500">Organization not found</div>
-      </div>
-    );
-  }
-  const [activeTab, setActiveTab] = useState('basic');
-  const [users, setUsers] = useState<User[]>([]);
-  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
-
   const fetchUsers = async () => {
+    if (!organization) return;
     try {
       const response = await fetch(`https://b2b-organizations.onrender.com/api/organizations/${organization.id}/users`);
       if (response.ok) {
@@ -87,12 +64,13 @@ export default function OrganizationDetailsPage() {
   };
 
   React.useEffect(() => {
-    if (activeTab === 'users') {
+    if (activeTab === 'users' && organization) {
       fetchUsers();
     }
-  }, [activeTab, organization.id]);
+  }, [activeTab, organization?.id]);
 
   const handleAddUser = async (userData: UserData) => {
+    if (!organization) return;
     try {
       const response = await fetch(`https://b2b-organizations.onrender.com/api/organizations/${organization.id}/users`, {
         method: 'POST',
@@ -133,6 +111,23 @@ export default function OrganizationDetailsPage() {
     };
     return colors[role as keyof typeof colors] || 'bg-gray-100 text-gray-700';
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-500">Loading organization...</div>
+      </div>
+    );
+  }
+
+  if (!organization) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-500">Organization not found</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Top nav */}
@@ -140,7 +135,7 @@ export default function OrganizationDetailsPage() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div className="w-28">
-              <div className="font-bold text-lg border-2 rounded-sm px-2 py-1 inline-block">LOGO</div>
+              <button onClick={() => navigate('/organizations')} className="font-bold text-lg border-2 rounded-sm px-2 py-1 inline-block hover:bg-gray-50">LOGO</button>
             </div>
             <nav className="hidden md:flex items-center gap-6 text-sm text-gray-500">
               <span className="text-gray-400">Dashboard</span>
@@ -247,91 +242,91 @@ export default function OrganizationDetailsPage() {
                   </button>
                 </div>
 
-            <div className="space-y-8">
-              {/* Organization details */}
-              <div>
-                <h3 className="text-base font-medium mb-4">Organization details</h3>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-8">
+                  {/* Organization details */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Organization name</label>
-                    <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
-                      {organization.name}
+                    <h3 className="text-base font-medium mb-4">Organization details</h3>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Organization name</label>
+                        <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                          {organization.name}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Organization SLUG</label>
+                        <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                          {organization.slug}
+                        </div>
+                      </div>
                     </div>
                   </div>
+
+                  {/* Contact details */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Organization SLUG</label>
-                    <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
-                      {organization.slug}
+                    <h3 className="text-base font-medium mb-4">Contact details</h3>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Primary Admin Mail Id</label>
+                        <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                          {organization.organizationMail || 'Not provided'}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Phone no</label>
+                        <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                          {organization.contact || 'Not provided'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Additional settings */}
+                  <div>
+                    <h3 className="text-base font-medium mb-4">Maximum Allowed Coordinators</h3>
+                    <div className="w-64">
+                      <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                        <option>Upto 5 Coordinators</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-medium mb-4">Timezone</h3>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Common name</label>
+                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                          <option>India Standard Time</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Region</label>
+                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                          <option>Asia/Colombo</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-medium mb-4">Language</h3>
+                    <div className="w-64">
+                      <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                        <option>English</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-medium mb-4">Official website URL</h3>
+                    <div className="w-64">
+                      <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                        {organization.slug}.com
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Contact details */}
-              <div>
-                <h3 className="text-base font-medium mb-4">Contact details</h3>
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Primary Admin Mail Id</label>
-                    <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
-                      {organization.organizationMail || 'Not provided'}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone no</label>
-                    <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
-                      {organization.contact || 'Not provided'}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Additional settings */}
-              <div>
-                <h3 className="text-base font-medium mb-4">Maximum Allowed Coordinators</h3>
-                <div className="w-64">
-                  <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
-                    <option>Upto 5 Coordinators</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-base font-medium mb-4">Timezone</h3>
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Common name</label>
-                    <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
-                      <option>India Standard Time</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Region</label>
-                    <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
-                      <option>Asia/Colombo</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-base font-medium mb-4">Language</h3>
-                <div className="w-64">
-                  <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
-                    <option>English</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-base font-medium mb-4">Official website URL</h3>
-                <div className="w-64">
-                  <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
-                    {organization.slug}.com
-                  </div>
-                </div>
-              </div>
-            </div>
               </>
             )}
 
@@ -354,7 +349,7 @@ export default function OrganizationDetailsPage() {
                   <table className="min-w-full">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Sr. No</th>
+                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Sl. No</th>
                         <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">User name</th>
                         <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Role</th>
                         <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Action</th>

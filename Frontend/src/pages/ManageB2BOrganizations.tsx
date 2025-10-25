@@ -103,6 +103,22 @@ export default function ManageB2BOrganizations() {
     navigate(`/organizations/${org.id}`);
   };
 
+  const handleDeleteOrganization = async (orgId: number) => {
+    if (!confirm('Are you sure you want to delete this organization?')) return;
+    
+    try {
+      const response = await fetch(`https://b2b-organizations.onrender.com/api/organizations/${orgId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        await fetchOrganizations();
+      }
+    } catch (error) {
+      console.error('Failed to delete organization:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Top nav */}
@@ -110,7 +126,7 @@ export default function ManageB2BOrganizations() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div className="w-28">
-              <div className="font-bold text-lg border-2 rounded-sm px-2 py-1 inline-block">LOGO</div>
+              <button onClick={() => navigate('/organizations')} className="font-bold text-lg border-2 rounded-sm px-2 py-1 inline-block hover:bg-gray-50">LOGO</button>
             </div>
             <nav className="hidden md:flex items-center gap-6 text-sm text-gray-500">
               <span className="text-gray-400">Dashboard</span>
@@ -189,7 +205,7 @@ export default function ManageB2BOrganizations() {
             <table className="min-w-full text-left">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-4 text-sm text-gray-500">Sr. No</th>
+                  <th className="px-6 py-4 text-sm text-gray-500">Sl. No</th>
                   <th className="px-6 py-4 text-sm text-gray-500">Organizations</th>
                   <th className="px-6 py-4 text-sm text-gray-500">Pending requests</th>
                   <th className="px-6 py-4 text-sm text-gray-500">Status</th>
@@ -228,7 +244,11 @@ export default function ManageB2BOrganizations() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
                       </button>
-                      <button title="delete" className="p-2 rounded-full hover:bg-gray-100">
+                      <button 
+                        title="delete" 
+                        onClick={() => handleDeleteOrganization(o.id)}
+                        className="p-2 rounded-full hover:bg-gray-100 hover:text-red-600"
+                      >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22" />
                         </svg>
