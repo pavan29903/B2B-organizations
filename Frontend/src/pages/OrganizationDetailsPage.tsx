@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import AddUserSidebar from '../components/AddUserSidebar';
 
 interface Organization {
@@ -10,10 +11,7 @@ interface Organization {
   createdAt: string;
 }
 
-interface OrganizationDetailsPageProps {
-  organization: Organization;
-  onBack: () => void;
-}
+
 
 interface User {
   id: number;
@@ -33,7 +31,45 @@ interface UserData {
 //   { id: 3, name: 'Nishta Gupta', email: 'nishta@gitam.in', role: 'Admin' }
 // ];
 
-export default function OrganizationDetailsPage({ organization, onBack }: OrganizationDetailsPageProps) {
+export default function OrganizationDetailsPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [organization, setOrganization] = useState<Organization | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOrganization = async () => {
+      if (!id) return;
+      try {
+        const response = await fetch(`https://b2b-organizations.onrender.com/api/organizations/${id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setOrganization(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch organization:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrganization();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-500">Loading organization...</div>
+      </div>
+    );
+  }
+
+  if (!organization) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-500">Organization not found</div>
+      </div>
+    );
+  }
   const [activeTab, setActiveTab] = useState('basic');
   const [users, setUsers] = useState<User[]>([]);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
@@ -113,14 +149,19 @@ export default function OrganizationDetailsPage({ organization, onBack }: Organi
           </div>
 
           <div className="flex items-center gap-4">
-            <button title="help" className="p-2 rounded-full hover:bg-gray-100">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12a9 9 0 1118 0v3a2 2 0 01-2 2h-1a2 2 0 01-2-2v-1" />
+            <button title="support" className="p-2 rounded-full hover:bg-gray-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12a9 9 0 0118 0v3a2 2 0 01-2 2h-1a2 2 0 01-2-2v-1a2 2 0 012-2h1V9a6 6 0 00-12 0v3h1a2 2 0 012 2v1a2 2 0 01-2 2H4a2 2 0 01-2-2v-3z" />
+              </svg>
+            </button>
+            <button title="notifications" className="p-2 rounded-full hover:bg-gray-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
             </button>
             <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center border border-purple-200">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5.121 17.804A9 9 0 1118.879 6.196 9 9 0 015.12 17.804z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
           </div>
@@ -133,7 +174,7 @@ export default function OrganizationDetailsPage({ organization, onBack }: Organi
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-200" viewBox="0 0 20 20" fill="currentColor">
             <path d="M10 2L2 8v8a2 2 0 002 2h12a2 2 0 002-2V8L10 2z" />
           </svg>
-          <button onClick={onBack} className="hover:text-purple-600">Manage B2B organizations</button>
+          <button onClick={() => navigate('/organizations')} className="hover:text-purple-600">Manage B2B organizations</button>
           <span>›</span>
           <span>Organization details</span>
         </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AddOrganizationSidebar from "../components/AddOrganizationSidebar";
-import OrganizationDetailsPage from "./OrganizationDetailsPage";
 
 /*
   ManageB2BOrganizations.tsx
@@ -49,9 +49,8 @@ function StatusPill({ status }: { status: OrgStatus }) {
 export default function ManageB2BOrganizations() {
   const [orgs, setOrgs] = useState<Organization[]>(MOCK_ORGS);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const fetchOrganizations = async () => {
     setLoading(true);
@@ -101,23 +100,8 @@ export default function ManageB2BOrganizations() {
   };
 
   const handleViewOrganization = (org: Organization) => {
-    setSelectedOrg(org);
-    setShowDetails(true);
+    navigate(`/organizations/${org.id}`);
   };
-
-  const handleBackToList = () => {
-    setShowDetails(false);
-    setSelectedOrg(null);
-  };
-
-  if (showDetails && selectedOrg) {
-    return (
-      <OrganizationDetailsPage 
-        organization={selectedOrg} 
-        onBack={handleBackToList}
-      />
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
@@ -136,17 +120,24 @@ export default function ManageB2BOrganizations() {
 
           <div className="flex items-center gap-4">
             <button
-              title="help"
+              title="support"
               className="p-2 rounded-full hover:bg-gray-100"
             >
-              {/* headset icon */}
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12a9 9 0 1118 0v3a2 2 0 01-2 2h-1a2 2 0 01-2-2v-1" />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12a9 9 0 0118 0v3a2 2 0 01-2 2h-1a2 2 0 01-2-2v-1a2 2 0 012-2h1V9a6 6 0 00-12 0v3h1a2 2 0 012 2v1a2 2 0 01-2 2H4a2 2 0 01-2-2v-3z" />
+              </svg>
+            </button>
+            <button
+              title="notifications"
+              className="p-2 rounded-full hover:bg-gray-100"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
             </button>
             <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center border border-purple-200">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5.121 17.804A9 9 0 1118.879 6.196 9 9 0 015.12 17.804z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
           </div>
