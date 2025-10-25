@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import AddOrganizationSidebar from "../components/AddOrganizationSidebar";
 import OrganizationDetailsPage from "./OrganizationDetailsPage";
 
@@ -54,6 +54,7 @@ export default function ManageB2BOrganizations() {
   const [loading, setLoading] = useState(false);
 
   const fetchOrganizations = async () => {
+    setLoading(true);
     try {
       const response = await fetch('http://localhost:3001/api/organizations');
       if (response.ok) {
@@ -68,6 +69,8 @@ export default function ManageB2BOrganizations() {
       }
     } catch (error) {
       console.error('Failed to fetch organizations:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -204,7 +207,13 @@ export default function ManageB2BOrganizations() {
               </thead>
 
               <tbody>
-                {orgs.map((o, idx) => (
+                {loading ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                      Loading organizations...
+                    </td>
+                  </tr>
+                ) : orgs.map((o, idx) => (
                   <tr key={o.id} className="border-b last:border-b-0">
                     <td className="px-6 py-5 align-middle text-sm text-gray-700 w-20">{idx + 1}</td>
                     <td className="px-6 py-5 align-middle flex items-center gap-4">

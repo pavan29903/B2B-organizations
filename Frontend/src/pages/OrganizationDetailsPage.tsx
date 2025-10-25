@@ -27,11 +27,11 @@ interface UserData {
   role: string;
 }
 
-const MOCK_USERS: User[] = [
-  { id: 1, name: 'Dave Richards', email: 'dave@gitam.in', role: 'Admin' },
-  { id: 2, name: 'Abhishek Hari', email: 'abhishek@gitam.in', role: 'Co-ordinator' },
-  { id: 3, name: 'Nishta Gupta', email: 'nishta@gitam.in', role: 'Admin' }
-];
+// const MOCK_USERS: User[] = [
+//   { id: 1, name: 'Dave Richards', email: 'dave@gitam.in', role: 'Admin' },
+//   { id: 2, name: 'Abhishek Hari', email: 'abhishek@gitam.in', role: 'Co-ordinator' },
+//   { id: 3, name: 'Nishta Gupta', email: 'nishta@gitam.in', role: 'Admin' }
+// ];
 
 export default function OrganizationDetailsPage({ organization, onBack }: OrganizationDetailsPageProps) {
   const [activeTab, setActiveTab] = useState('basic');
