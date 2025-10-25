@@ -40,7 +40,7 @@ export default function OrganizationDetailsPage({ organization, onBack }: Organi
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/organizations/${organization.id}/users`);
+      const response = await fetch(`https://b2b-organizations.onrender.com/api/organizations/${organization.id}/users`);
       if (response.ok) {
         const data = await response.json();
         setUsers(data);
@@ -58,7 +58,7 @@ export default function OrganizationDetailsPage({ organization, onBack }: Organi
 
   const handleAddUser = async (userData: UserData) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/organizations/${organization.id}/users`, {
+      const response = await fetch(`https://b2b-organizations.onrender.com/api/organizations/${organization.id}/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ export default function OrganizationDetailsPage({ organization, onBack }: Organi
 
   const handleDeleteUser = async (userId: number) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+      const response = await fetch(`https://b2b-organizations.onrender.com/api/users/${userId}`, {
         method: 'DELETE',
       });
       

@@ -56,7 +56,7 @@ export default function ManageB2BOrganizations() {
   const fetchOrganizations = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/organizations');
+      const response = await fetch('https://b2b-organizations.onrender.com/api/organizations');
       if (response.ok) {
         const data = await response.json();
         const formattedData = data.map((org: any) => ({
@@ -81,7 +81,7 @@ export default function ManageB2BOrganizations() {
   const handleAddOrganization = async (data: OrganizationData) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/organizations', {
+      const response = await fetch('https://b2b-organizations.onrender.com/api/organizations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
