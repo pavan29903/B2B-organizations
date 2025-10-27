@@ -2,6 +2,13 @@
 
 A comprehensive web application for managing B2B organizations and their users. This system provides a clean, intuitive interface for organization administrators to manage their organizational structure, user roles, and settings.
 
+## Screenshots
+
+![Screenshot 1](Frontend/public/ss1.png)
+![Screenshot 2](Frontend/public/ss2.png)
+![Screenshot 3](Frontend/public/ss3.png)
+![Screenshot 4](Frontend/public/ss4.png)
+
 ## Features
 
 ### Organization Management
@@ -41,7 +48,9 @@ A comprehensive web application for managing B2B organizations and their users. 
 - **Tailwind CSS** for styling
 - **Vite** for build tooling
 
-### Backend API
+### Backend
+- **Node.js** with TypeScript
+- **Express.js** for REST API framework
 - REST API hosted at `https://b2b-organizations.onrender.com`
 - Endpoints for organizations and users CRUD operations
 
